@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Theta 360°全天球動画 サンプル</title>
+</head>
+<body>
+
+    <script src="./aframe/aframe-0.7.0.min.js"></script>
+
+    <script src="./aframe/videosphere/arrow-key-rotation.js"></script>
+    <script src="./aframe/videosphere/play-on-window-click.js"></script>
+    <script src="./aframe/videosphere/play-on-vrdisplayactivate-or-enter-vr.js"></script>
+    <script src="./aframe/videosphere/hide-once-playing.js"></script>
+
+    <a-scene vr-mode-ui="enabled: false">
+
+        <a-videosphere rotation="0 0 0" src="#video" 
+            play-on-vrdisplayactivate-or-enter-vr>
+        </a-videosphere>
+
+        <a-assets>
+            <video id="video" style="display:none" 
+                autoplay crossorigin="anonymous" playsinline webkit-playsinline>
+                <source type="video/mp4" src="R0010506_er-1.mp4">
+            </video>
+        </a-assets>
+    </a-scene>
+
+    <div id="play" style="font-size: 40px; color: #fff; background: rgba(50, 50, 50, 0.7); padding: 20px; border-radius: 20px; position: absolute; top: calc(50% - 40px); left: calc(50% - 40px); transform: rotate(90deg); cursor: pointer; display: none;">
+        ▲
+    </div>
+
+    <div id="pause" style="font-size: 40px; color: #fff; font-weight: bold; background: rgba(50, 50, 50, 0.7); padding: 20px; border-radius: 20px; position: absolute; top: calc(50% - 40px); left: calc(50% - 40px); transform: rotate(90deg); cursor: pointer; display: none;">
+        ＝
+    </div>
+
+    <script>
+        var boxEl = document.querySelector('a-videosphere');
+        var videoEl = document.getElementById("video");
+        var playBtn = document.getElementById("play");
+        var pauseBtn = document.getElementById("pause");
+
+        playBtn.addEventListener('click', function() {
+            var video = boxEl.components.material.material.map.image;
+            if (!video) { return; }
+            video.play();
+            playBtn.style.display = "none";
+
+            window.addEventListener('mouseover', e_mover);
+            window.addEventListener('mouseout',e_mout);
+        });
+
+        function e_mover() {
+            pauseBtn.style.display = "inline";
+        }
+
+        function e_mout() {
+            pauseBtn.style.display = "none";
+        }
+
+        pauseBtn.addEventListener('click', function() {
+            var video = boxEl.components.material.material.map.image;
+            if (!video) { return; }
+            video.pause();
+            window.removeEventListener('mouseover', e_mover);
+            window.removeEventListener('mouseout', e_mout);
+            pauseBtn.style.display = "none";
+            playBtn.style.display = "inline";
+        });
+
+        videoEl.addEventListener('loadeddata', function() {
+            playBtn.style.display = "inline";
+        });
+
+        videoEl.addEventListener('ended', function() {
+            window.removeEventListener('mouseover', e_mover);
+            window.removeEventListener('mouseout', e_mout);
+            pauseBtn.style.display = "none";
+            playBtn.style.display = "inline";
+        });
+    </script>
+
+</body>
+</html>
